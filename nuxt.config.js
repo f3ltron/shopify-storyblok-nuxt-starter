@@ -1,8 +1,8 @@
 export default {
   env: {
     storeUrl:
-      process.env.BIGCOMMERCE_URL || 'https://demo-store.mybigcommerce.com',
-    storeToken: process.env.BIGCOMMERCE_TOKEN || '',
+      process.env.SHOPIFY_URL || 'https://nuxt-storyblok.myshopify.com',
+    storeToken: process.env.SHOPIFY_TOKEN || '',
   },
 
   /*

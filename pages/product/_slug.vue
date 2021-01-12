@@ -1,7 +1,7 @@
 <template>
   <section
-    v-editable="story"
     v-if="product"
+    v-editable="story"
     class="text-gray-700 body-font overflow-hidden bg-white"
   >
     <div class="container px-5 py-24 mx-auto">
