@@ -16,6 +16,52 @@ async function sendQuery(query) {
     .then((res) => res.data)
 }
 
+const query = `
+query ProductsById {
+    site {
+      products(entityIds: [], first: 50) {
+        pageInfo {
+          startCursor
+          endCursor
+        }
+        edges {
+          node {
+            ...ProductFields
+          }
+        }
+      }
+    }
+  }
+  
+fragment ProductFields on Product {
+  id
+  entityId
+  name
+  sku
+  path
+  description
+  addToCartUrl
+  addToWishlistUrl
+  categories {
+    edges {
+      node {name}
+    }
+  }
+  defaultImage {
+    img320px: url(width: 320)
+    img640px: url(width: 640)
+    img960px: url(width: 960)
+    img1280px: url(width: 1280)
+    altText
+  }
+  prices {
+    price {
+      value
+      currencyCode
+    }
+  }
+}`
+
 // export async getStoreSettings() {
 
 // }
