@@ -19,7 +19,10 @@ import {
 
 export default {
   props: {
-    category: Object,
+    category: {
+      type: Object,
+      required: true,
+    },
     error: Error,
   },
   data() {

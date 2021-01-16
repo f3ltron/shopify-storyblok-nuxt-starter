@@ -38,7 +38,12 @@
 
 <script>
 export default {
-  props: ['blok'],
+  props: {
+    blok: {
+      type: Object,
+      required: true,
+    },
+  },
   computed: {
     imgUrl() {
       const imageUrl = this.blok.image

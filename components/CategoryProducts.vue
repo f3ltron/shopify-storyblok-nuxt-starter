@@ -24,9 +24,15 @@ import Category from './Category'
 export default {
   components: { Category },
   props: {
-    products: Array,
-    error: Object,
-    blok: Object,
+    products: {
+      type: Array,
+      required: true,
+    },
+    blok: {
+      type: Object,
+      required: true,
+    },
+    error: Error,
   },
   data() {
     return {

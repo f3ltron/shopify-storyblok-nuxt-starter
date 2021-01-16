@@ -23,29 +23,30 @@ export default {
   components: {
     Placeholder,
   },
-  asyncData(context) {
-    return context.app.$storyapi
-      .get('cdn/stories/home', {
+  async asyncData(context) {
+    try {
+      const { data } = await context.app.$storyapi.get('cdn/stories/home', {
         version: process.env.NODE_ENV === 'production' ? 'production' : 'draft',
       })
-      .then((res) => {
-        return res.data
-      })
-      .catch((res) => {
-        if (!res.response) {
-          console.error(res)
-          context.error({
-            statusCode: 404,
-            message: 'Failed to receive content from api',
-          })
-        } else {
-          console.error(res.response.data)
-          context.error({
-            statusCode: res.response.status,
-            message: res.response.data,
-          })
-        }
-      })
+      console.log(data)
+
+      return {
+        story: data.story,
+      }
+    } catch (e) {
+      console.log(e)
+      //  if (!res.response) {
+      //     context.error({
+      //       statusCode: 404,
+      //       message: 'Failed to receive content from api',
+      //     })
+      //   } else {
+      //     context.error({
+      //       statusCode: res.response.status,
+      //       message: res.response.data,
+      //     })
+      //   }
+    }
   },
   data() {
     return {

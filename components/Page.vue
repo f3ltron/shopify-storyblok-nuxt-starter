@@ -2,15 +2,20 @@
   <div v-editable="blok">
     <component
       :is="blok.component | dashify"
-      v-for="blok in blok.body"
-      :key="blok._uid"
-      :blok="blok"
+      v-for="b in blok.body"
+      :key="b._uid"
+      :blok="b"
     ></component>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['blok'],
+  props: {
+    blok: {
+      type: Object,
+      required: true,
+    },
+  },
 }
 </script>

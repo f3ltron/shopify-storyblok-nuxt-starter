@@ -21,8 +21,11 @@ import ProductSlider from './ProductSlider'
 export default {
   components: { ProductSlider },
   props: {
-    error: Object,
-    blok: Object,
+    blok: {
+      type: Object,
+      required: true,
+    },
+    error: Error,
   },
   data() {
     return {

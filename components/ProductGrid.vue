@@ -66,10 +66,19 @@ import {
 
 export default {
   props: {
-    blok: Object,
-    products: Object,
-    categories: Object,
-    error: Object,
+    blok: {
+      type: Object,
+      required: true,
+    },
+    products: {
+      type: Object,
+      required: true,
+    },
+    categories: {
+      type: Object,
+      required: true,
+    },
+    error: Error,
   },
   data() {
     return {

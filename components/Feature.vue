@@ -48,7 +48,10 @@ import { getProductById } from '../plugins/graphql-bigcommerce'
 
 export default {
   props: {
-    blok: Object,
+    blok: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {

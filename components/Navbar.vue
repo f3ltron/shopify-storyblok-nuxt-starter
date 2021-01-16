@@ -30,7 +30,7 @@
       </div>
       <div
         v-if="story.content.items"
-        class="flex flex-col md:flex-row hidden md:block -mx-2"
+        class="md:flex flex-col md:flex-row hidden -mx-2"
       >
         <nuxt-link
           v-for="item in story.content.items"
@@ -56,11 +56,6 @@
 
 <script>
 export default {
-  data() {
-    return {
-      story: {},
-    }
-  },
   asyncData(context) {
     return context.app.$storyapi
       .get('cdn/stories/navigation', {
@@ -71,19 +66,22 @@ export default {
       })
       .catch((res) => {
         if (!res.response) {
-          console.error(res)
           context.error({
             statusCode: 404,
             message: 'Failed to receive content form api',
           })
         } else {
-          console.error(res.response.data)
           context.error({
             statusCode: res.response.status,
             message: res.response.data,
           })
         }
       })
+  },
+  data() {
+    return {
+      story: {},
+    }
   },
 }
 </script>
