@@ -26,7 +26,8 @@ export default {
   async asyncData(context) {
     try {
       const { data } = await context.app.$storyapi.get('cdn/stories/home', {
-        version: process.env.NODE_ENV === 'production' ? 'production' : 'draft',
+        // version: process.env.NODE_ENV === 'production' ? 'published' : 'draft',
+        version: 'draft',
       })
       console.log(data)
 
