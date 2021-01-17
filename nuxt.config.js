@@ -3,12 +3,6 @@ export default {
     storeUrl: process.env.SHOPIFY_URL || 'https://storyblok-demo.myshopify.com',
     storeToken: process.env.SHOPIFY_TOKEN || '',
   },
-
-  /*
-   ** Nuxt rendering mode
-   ** See https://nuxtjs.org/api/configuration-mode
-   */
-  mode: 'universal',
   /*
    ** Nuxt target
    ** See https://nuxtjs.org/api/configuration-target

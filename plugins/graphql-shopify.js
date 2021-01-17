@@ -77,7 +77,7 @@ async function sendQuery(query) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_TOKEN,
+      'X-Shopify-Storefront-Access-Token': process.env.storeToken,
     },
     body: JSON.stringify({
       query,
