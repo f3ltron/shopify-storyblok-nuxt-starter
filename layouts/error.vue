@@ -19,7 +19,7 @@ export default {
   props: {
     error: {
       type: Error,
-      required: true,
+      default: () => new Error('error'),
     },
   },
   layout: 'default',

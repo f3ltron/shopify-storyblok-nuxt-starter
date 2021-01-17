@@ -4,39 +4,52 @@
     v-editable="story"
     class="text-gray-700 body-font overflow-hidden bg-white"
   >
+    <div
+      class="container px-5 py-24 mx-auto text-center flex flex-col items-center storyblok__outline"
+    >
+      <h1 class="text-4xl font-bold mb-8">
+        {{ story.content ? story.content.name : product.title }}
+      </h1>
+      <div>
+        <span class="text-3xl text-primary text-left leading-tight h-3 block">
+          <div class="leading-relaxed" v-html="richtext" />
+        </span>
+      </div>
+    </div>
     <div class="container px-5 py-24 mx-auto">
       <div class="lg:w-4/5 mx-auto flex flex-wrap">
         <img
-          v-if="product.defaultImage"
-          :alt="product.defaultImage.altText"
+          v-if="getFirstImage"
+          :alt="getFirstImage.altText"
           class="lg:w-1/2 w-full object-cover object-center rounded border border-gray-200"
-          :src="product.defaultImage.img1280px"
+          :src="getFirstImage.transformedSrc"
         />
         <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
           <p class="text-sm title-font text-gray-500 tracking-widest">
             <span
-              v-for="category in product.categories.edges"
-              :key="category.node.name"
-              >{{ category.node.name }} -</span
+              v-for="category in product.collections.edges"
+              :key="category.node.title"
+              >{{ category.node.title }} -</span
             >
           </p>
           <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">
-            {{ story.content ? story.content.name : product.name }}
+            {{ product.title }}
           </h1>
-          <div v-if="story.content" class="leading-relaxed" v-html="richtext" />
-          <p v-else class="leading-relaxed" v-html="product.description"></p>
+          <p class="leading-relaxed" v-html="product.description"></p>
           <span class="block mt-4 pb-5 border-b-2 border-gray-200 mb-5"></span>
           <div class="flex">
             <span class="title-font font-medium text-2xl text-gray-900">
               {{
-                `${product.prices.price.value} ${product.prices.price.currencyCode}`
+                `${product.priceRange.maxVariantPrice.amount} ${product.priceRange.maxVariantPrice.currencyCode}`
               }}
             </span>
+            <!-- this is handle by the checkout graphql api -->
             <a
-              :href="product.addToCartUrl"
+              href="#"
               class="flex ml-auto text-white bg-primary border-0 py-2 px-6 focus:outline-none hover:bg-gray-800 rounded"
-              >Go to shop</a
+              >Add to Cart</a
             >
+
             <a
               :href="product.addToWishlistUrl"
               class="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4"
@@ -62,17 +75,10 @@
 </template>
 
 <script>
-import {
-  getProductBySlug,
-  getProductById,
-} from '../../plugins/graphql-bigcommerce'
+import { getProductBySlug } from '~/plugins/graphql-shopify'
 
 export default {
   async asyncData(context) {
-    let story = {}
-    let commerceResponse = {}
-    let p2 = {}
-
     try {
       const { data } = await context.app.$storyapi.get(
         `cdn/stories/product/${context.params.slug}`,
@@ -80,35 +86,30 @@ export default {
           version: 'draft',
         }
       )
-      story = data.story
-    } catch (e) {
-      console.warn(e)
-    }
 
-    try {
-      commerceResponse = await getProductBySlug(`/${context.params.slug}`)
-      p2 = await getProductById(commerceResponse.site.route.node.entityId)
-    } catch (e) {
-      console.warn(e)
-    }
+      const res = await getProductBySlug(context.params.slug)
 
-    return {
-      story,
-      product: p2.site.product,
+      console.log(res)
+      return {
+        product: res.productByHandle,
+        story: data.story,
+      }
+    } catch (e) {
+      console.log(e)
     }
   },
-  data() {
-    return {
-      product: null,
-      story: {},
-      error: null,
-    }
-  },
+  data: () => ({
+    product: null,
+    story: {},
+  }),
   computed: {
     richtext() {
       return this.$storyapi.richTextResolver.render(
         this.story.content.description
       )
+    },
+    getFirstImage() {
+      return this.product ? this.product.images.edges[0].node : null
     },
   },
   mounted() {

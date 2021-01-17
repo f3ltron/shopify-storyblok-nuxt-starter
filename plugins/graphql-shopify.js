@@ -1,12 +1,83 @@
+// https://shopify.dev/docs/storefront-api/reference/common-objects/image
+const fragmentImage = `
+fragment FragmentImage on Image {
+  width
+  height
+  originalSrc
+  transformedSrc(preferredContentType: WEBP)
+  altText
+}
+`
+// https://shopify.dev/docs/storefront-api/reference/products/collection
+const fragmentCollection = `
+fragment FragmentCollection on Collection {
+  id
+  handle
+  description
+  title
+}
+`
+
+// https://shopify.dev/docs/storefront-api/reference/products/product
+
+const fragmentProduct = `
+${fragmentCollection}
+
+${fragmentImage}
+
+fragment FragmentProduct on Product {
+  id
+  handle
+  tags
+  images(first: 8) {
+    edges {
+      node {
+        ...FragmentImage
+      }
+    }
+  }
+  description
+  priceRange {
+    maxVariantPrice {
+      amount
+      currencyCode
+    }
+  }
+  collections(first: 8) {
+    edges {
+      node {
+        ...FragmentCollection
+      }
+    }
+  }
+  title
+}
+`
+
+const fragmentCollectionWithProducts = `
+${fragmentProduct}
+
+fragment FragmentCollectionWithProducts on Collection {
+  ...FragmentCollection
+  products(first: 10) {
+    edges {
+      node {
+        ...FragmentProduct
+      }
+    }
+  } 
+}
+`
+
 async function sendQuery(query) {
   const url = new URL(process.env.storeUrl)
-  const graphQLQuery = `${url.origin}/graphql`
+  const graphQLQuery = `${url.origin}/api/2021-01/graphql.json`
 
   return await fetch(graphQLQuery, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY.TOKEN,
+      'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_TOKEN,
     },
     body: JSON.stringify({
       query,
@@ -16,52 +87,46 @@ async function sendQuery(query) {
     .then((res) => res.data)
 }
 
-const query = `
-query ProductsById {
-    site {
-      products(entityIds: [], first: 50) {
-        pageInfo {
-          startCursor
-          endCursor
-        }
-        edges {
-          node {
-            ...ProductFields
-          }
+export async function getProducts(tag = 'All', first = 50) {
+  const productQuery = `
+  ${fragmentProduct}
+  {
+    products(query: "tag:${tag}", first: ${first}) {
+      edges {
+        node{
+          ...FragmentProduct
         }
       }
     }
   }
-  
-fragment ProductFields on Product {
-  id
-  entityId
-  name
-  sku
-  path
-  description
-  addToCartUrl
-  addToWishlistUrl
-  categories {
-    edges {
-      node {name}
-    }
-  }
-  defaultImage {
-    img320px: url(width: 320)
-    img640px: url(width: 640)
-    img960px: url(width: 960)
-    img1280px: url(width: 1280)
-    altText
-  }
-  prices {
-    price {
-      value
-      currencyCode
-    }
-  }
-}`
+  `
+  return await sendQuery(productQuery)
+}
 
+export async function getProductBySlug(handle) {
+  const query = `
+  ${fragmentProduct}
+  {
+    productByHandle(handle: "${handle}") {
+      ...FragmentProduct
+    }
+  }
+  `
+  return await sendQuery(query)
+}
+
+export async function getProductsByCategory(handle) {
+  const query = `
+    ${fragmentCollectionWithProducts}
+    {
+      collectionByHandle(handle: "${handle}") {
+        ...FragmentCollectionWithProducts
+      }
+    }
+  `
+
+  return await sendQuery(query)
+}
 // export async getStoreSettings() {
 
 // }

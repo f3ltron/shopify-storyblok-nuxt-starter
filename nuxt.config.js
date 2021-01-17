@@ -1,6 +1,6 @@
 export default {
   env: {
-    storeUrl: process.env.SHOPIFY_URL || 'https://nuxt-storyblok.myshopify.com',
+    storeUrl: process.env.SHOPIFY_URL || 'https://storyblok-demo.myshopify.com',
     storeToken: process.env.SHOPIFY_TOKEN || '',
   },
 

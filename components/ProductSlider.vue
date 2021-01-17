@@ -7,8 +7,8 @@
   >
     <nuxt-link
       v-for="product in products"
-      :key="product.entityId"
-      :to="`/product${product.path}`"
+      :key="product.id"
+      :to="`/product/${product.handle}`"
     >
       <div
         class="flex-shrink-0 m-6 relative overflow-hidden rounded-lg max-w-xs hover:opacity-50"
@@ -16,13 +16,13 @@
         <div class="card flex flex-col justify-center p-8">
           <div class="prod-img">
             <img
-              :src="product.defaultImage.img640px"
+              :src="product.images.edges[0].node.transformedSrc"
               class="w-full object-cover object-center"
             />
           </div>
           <div class="prod-title">
             <p class="text-xs mt-4 mb-2 uppercase text-gray-900">
-              {{ product.name }}
+              {{ product.title }}
             </p>
           </div>
           <div class="prod-info grid gap-10">
@@ -31,7 +31,7 @@
             >
               <p class="font-bold text-xl">
                 {{
-                  `${product.prices.price.value} ${product.prices.price.currencyCode}`
+                  `${product.priceRange.maxVariantPrice.amount} ${product.priceRange.maxVariantPrice.currencyCode}`
                 }}
               </p>
             </div>
